@@ -8,10 +8,10 @@
 
 import sys
 
-if __name__ == "__main__":
-    definicion_grafo = sys.argv[1]
-    estado_inicial = sys.argv[2]
-    estado_final = sys.argv[3]
+
+definicion_grafo = sys.argv[1]
+estado_inicial = sys.argv[2]
+estado_final = sys.argv[3]
 
 #Abrir archivo de definicion del grafo
 grafo = open(definicion_grafo, "r")
