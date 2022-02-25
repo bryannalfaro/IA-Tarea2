@@ -141,5 +141,10 @@ def find_empty_spaces(bo):
     return False
 
 
-solution(board)
+print('-------------Sin resolver--------------------')
 print_board(board)
+print('---------------------------------------------')
+solution(board)
+print('-----------------Resuelto--------------------')
+print_board(board)
+print('---------------------------------------------')
