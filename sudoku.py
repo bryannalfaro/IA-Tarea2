@@ -7,6 +7,7 @@
 # Oscar Saravia
 
 # Operations
+
 def createSudoku(size):
   allowedSizes = [4, 6, 9]
   matrix = []
@@ -19,25 +20,6 @@ def createSudoku(size):
     return matrix
   else:
     print('Únicamente se aceptan 4, 6 o 9 como tamaños')
-
-def showSudoku(matrix, size):
-  module = 0
-  if (size == 9):
-    module = 3
-  elif (size == 6):
-    module = 2
-  elif (size == 4):
-    module = 1
-  for i in range(len(matrix)):
-    if i % module == 0 and i != 0:
-      print("- - - - - - - - - - - - - ")
-    for j in range(len(matrix[0])):
-      if j % module == 0 and j != 0:
-        print(" | ", end="")
-      if j == (size - 1):
-        print(matrix[i][j])
-      else:
-        print(str(matrix[i][j]) + " ", end="")
 
 def fillInitialPositions(sudoku, initialPositions):
   # print(sudoku)
@@ -57,52 +39,6 @@ def fillInitialPositions(sudoku, initialPositions):
       return
   return sudoku
 
-def solveSudoku(matrix, size):
-  find = getEmptySlots(matrix)
-  if not find:
-    return True
-  else:
-    row, col = find
-  for i in range(1,size + 1):
-    if valid(matrix, i, (row, col), size):
-      matrix[row][col] = i
-      if solveSudoku(matrix, size):
-          return True
-      matrix[row][col] = 0
-  return False
-
-def valid(bo, num, pos, size):
-  module = 0
-  if (size == 9):
-    module = 3
-  elif (size == 6):
-    module = 2
-  elif (size == 4):
-    module = 1
-  for i in range(len(bo[0])):
-    if bo[pos[0]][i] == num and pos[1] != i:
-      return False
-  for i in range(len(bo)):
-    if bo[i][pos[1]] == num and pos[0] != i:
-      return False
-
-  box_x = pos[1] // module
-  box_y = pos[0] // module
-
-  for i in range(box_y*module, box_y*module + module):
-    for j in range(box_x * module, box_x*module + module):
-      if bo[i][j] == num and (i,j) != pos:
-        return False
-
-  return True
-
-def getEmptySlots(matrix):
-  for i in range(len(matrix)):
-    for j in range(len(matrix[0])):
-      if matrix[i][j] == 0:
-        return (i, j)
-  return None
-
 # Variables
 sudokuConfigLines = []
 sudokuSize = 0
@@ -111,7 +47,7 @@ isConfigValid = True
 errorMsg = 'La configuración del sudoku no es válida, ingrese el tamaño del sudoku y la cantidad de posiciones iniciales.'
 
 # Reading the txt file
-sudokuFile = open('sudoku6.txt', 'r')
+sudokuFile = open('sudoku4.txt', 'r')
 try:
   for line in sudokuFile:
     tempList = []
@@ -139,10 +75,71 @@ if isConfigValid and len(sudokuConfigLines) >= 2:
       sudokuInitialValues.pop(0)
     emptySudoku = createSudoku(sudokuSize)
     filledSudoku = fillInitialPositions(emptySudoku, sudokuInitialValues)
-    if (filledSudoku):
-      print('INITIAL SUDOKU')
-      showSudoku(filledSudoku, sudokuSize)
-      solveSudoku(filledSudoku, sudokuSize)
-      print('FINAL SUDOKU')
-      showSudoku(filledSudoku, sudokuSize)
 
+board = filledSudoku
+
+def print_board(bo):
+    print(bo)
+
+def solution(bo):
+    find = find_empty_spaces(bo)
+    if not find:
+        return True
+    else:
+        row, col = find
+    for m in range(1,sudokuSize + 1):
+        if valid(bo, m, (row, col)):
+
+            bo[row][col] = m
+
+            if solution(bo):
+                return True
+
+            bo[row][col] = 0
+    return False
+
+def valid(bo, num, pos):
+    row, col = pos
+    for m in range(sudokuSize):
+        if bo[row][m] == num and col != m:
+            return False
+    for m in range(sudokuSize):
+        if bo[m][col] == num and row != m:
+            return False
+
+    
+    if sudokuSize == 6:
+        squares_x = col // 3 * 3
+        squares_y = row // 2 * 2
+        y = 2
+        x = 3
+    elif sudokuSize == 9:
+        squares_x = col // 3 * 3
+        squares_y = row // 3 * 3
+        y = 3
+        x = 3
+    else:
+        squares_x = col // 2 * 2
+        squares_y = row // 2 * 2
+        y = 2
+        x = 2
+    
+
+    for m in range(squares_y, squares_y + y):
+        for c in range(squares_x, squares_x + x):
+            if bo[m][c] == num and (m,c) != pos:
+                return False
+
+    return True
+
+def find_empty_spaces(bo):
+    for m in range(len(bo)):
+        for c in range(len(bo[0])):
+            if bo[m][c] == 0:
+                return (m,c)
+
+    return False
+
+
+solution(board)
+print_board(board)
